@@ -43,6 +43,8 @@ from crfnet.utils.anchor_parameters import AnchorParameters
 from crfnet.data_processing.generator.crf_main_generator import create_generators
 
 
+tf.compat.v1.disable_eager_execution()
+
 def model_with_weights(model, weights, skip_mismatch, config=None, num_classes=None):
     """ Load weights for model.
 
