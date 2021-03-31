@@ -11,8 +11,10 @@ from keras_applications import vgg16
 from keras.applications import keras_modules_injection
 from keras.backend import concatenate, shape
 from keras.layers import Lambda, Concatenate
-import keras.backend as K
-import keras
+# import keras.backend as K
+import tensorflow.python.keras as keras
+from tensorflow.python.keras import backend as K
+
 
 @keras_modules_injection
 def custom(*args, **kwargs):

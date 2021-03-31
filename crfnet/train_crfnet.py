@@ -22,6 +22,8 @@ import traceback
 import keras
 import keras.preprocessing.image
 import tensorflow as tf
+from tensorflow.python.keras import backend as k
+
 
 # Allow relative imports when being executed as script.
 if __name__ == "__main__" and not __package__:
@@ -291,7 +293,7 @@ def main():
     # optionally choose specific GPU
     os.environ['CUDA_VISIBLE_DEVICES'] = cfg.gpu
 
-    keras.backend.tensorflow_backend.set_session(get_session(cfg.gpu_mem_usage))
+    k.set_session(get_session(cfg.gpu_mem_usage))
 
     # create the generators
     if 'nuscenes' in cfg.data_set:
