@@ -21,8 +21,9 @@ import traceback
 # Third party imports
 import keras
 import keras.preprocessing.image
-import tensorflow as tf
-tf.compat.v1.disable_eager_execution()
+import tensorflow.compat.v1 as tf
+tf.disable_eager_execution()
+tf.disable_v2_behavior()
 
 from tensorflow.python.keras import backend as k
 
@@ -163,7 +164,7 @@ def create_models(backbone_retinanet, num_classes, weights, multi_gpu=0,
                 'classification': losses.focal(),
                 'distance'      : losses.smooth_l1(alpha=distance_alpha)
             },
-            optimizer=keras.optimizers.adam(lr=lr, clipnorm=0.001),
+            optimizer=tf.keras.optimizers.Adam(lr=lr, clipnorm=0.001),
             run_eagerly=False
         )
     else:
@@ -172,7 +173,7 @@ def create_models(backbone_retinanet, num_classes, weights, multi_gpu=0,
                 'regression'    : losses.smooth_l1(),
                 'classification': losses.focal(),
             },
-            optimizer=keras.optimizers.adam(lr=lr, clipnorm=0.001),
+            optimizer=tf.keras.optimizers.Adam(lr=lr, clipnorm=0.001),
             run_eagerly=False
         )
 
@@ -264,7 +265,8 @@ def create_callbacks(model, prediction_model, validation_generator, cfg):
 
 
 def main():
-    tf.compat.v1.disable_eager_execution()
+    tf.disable_eager_execution()
+    tf.disable_v2_behavior()
 
     FILE_DIRECTORY = os.path.dirname(os.path.abspath(__file__)) 
 
@@ -381,7 +383,7 @@ def main():
 
 
     ## Start training
-    training_model.fit_generator(
+    tf.keras.Model.fit(
         generator=train_generator,
         steps_per_epoch=len(train_generator),
         epochs=cfg.epochs,

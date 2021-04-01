@@ -16,6 +16,9 @@ limitations under the License.
 
 #todo: @Max purpose of vgg and vgg_max scripts? Unify scripts?
 import tensorflow.compat.v1 as tf
+
+from ...utils.pretrained_weights import get_weights_path
+
 tf.disable_v2_behavior()
 from tensorflow.keras.utils import get_file
 
@@ -39,13 +42,13 @@ class VGGBackbone(Backbone):
         Weights can be downloaded at https://github.com/fizyr/keras-models/releases .
         """
         if self.backbone == 'vgg16':
-            resource = tf.compat.v1.keras.applications.VGG16(weights=WEIGHTS_PATH_NO_TOP)
+            resource = get_weights_path('vgg')
             checksum = '6d6bbae143d832006294945121d1f1fc'
         elif 'vgg-max' in self.backbone:
-            resource = tf.compat.v1.keras.applications.VGG16.WEIGHTS_PATH_NO_TOP
+            resource = get_weights_path('vgg')
             checksum = '6d6bbae143d832006294945121d1f1fc'
         elif self.backbone == 'vgg19':
-            resource = tf.keras.applications.vgg19.VGG19.WEIGHTS_PATH_NO_TOP
+            resource = get_weights_path('vgg')
             checksum = '253f8cb515780f3b799900260a226db6'
         else:
             raise ValueError("Backbone '{}' not recognized.".format(self.backbone))
