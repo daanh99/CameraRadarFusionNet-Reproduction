@@ -22,6 +22,8 @@ import traceback
 import keras
 import keras.preprocessing.image
 import tensorflow as tf
+tf.compat.v1.disable_eager_execution()
+
 from tensorflow.python.keras import backend as k
 
 
@@ -44,8 +46,8 @@ from crfnet.utils.helpers import makedirs, get_session
 from crfnet.utils.anchor_parameters import AnchorParameters
 from crfnet.data_processing.generator.crf_main_generator import create_generators
 
-
 tf.compat.v1.disable_eager_execution()
+
 
 def model_with_weights(model, weights, skip_mismatch, config=None, num_classes=None):
     """ Load weights for model.
@@ -161,7 +163,8 @@ def create_models(backbone_retinanet, num_classes, weights, multi_gpu=0,
                 'classification': losses.focal(),
                 'distance'      : losses.smooth_l1(alpha=distance_alpha)
             },
-            optimizer=keras.optimizers.adam(lr=lr, clipnorm=0.001)
+            optimizer=keras.optimizers.adam(lr=lr, clipnorm=0.001),
+            run_eagerly=False
         )
     else:
         training_model.compile(
@@ -169,7 +172,8 @@ def create_models(backbone_retinanet, num_classes, weights, multi_gpu=0,
                 'regression'    : losses.smooth_l1(),
                 'classification': losses.focal(),
             },
-            optimizer=keras.optimizers.adam(lr=lr, clipnorm=0.001)
+            optimizer=keras.optimizers.adam(lr=lr, clipnorm=0.001),
+            run_eagerly=False
         )
 
     return model, training_model, prediction_model
@@ -260,6 +264,7 @@ def create_callbacks(model, prediction_model, validation_generator, cfg):
 
 
 def main():
+    tf.compat.v1.disable_eager_execution()
 
     FILE_DIRECTORY = os.path.dirname(os.path.abspath(__file__)) 
 

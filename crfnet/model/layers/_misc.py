@@ -15,8 +15,9 @@ limitations under the License.
 """
 
 # 3rd Party Libraries
-import keras
+from tensorflow import keras
 import numpy as np
+import tensorflow as tf
 
 # Custom imports
 from crfnet.model import backend
@@ -24,7 +25,7 @@ from crfnet.utils.anchor_parameters import AnchorParameters
 from crfnet.utils.anchor import generate_anchors
 
 
-class Anchors(keras.layers.Layer):
+class Anchors(tf.compat.v1.keras.layers.Layer):
     """ Keras layer for generating achors for a given shape.
     """
 

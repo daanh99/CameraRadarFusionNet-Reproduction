@@ -3,20 +3,18 @@ from __future__ import division
 from __future__ import print_function
 import os
 
-from keras_applications import get_submodules_from_kwargs
-from keras_applications import imagenet_utils
-from keras_applications.imagenet_utils import decode_predictions
+from tensorflow.keras.applications import imagenet_utils
 from keras_applications.imagenet_utils import _obtain_input_shape
-from keras_applications import vgg16
-from keras.applications import keras_modules_injection
-from keras.backend import concatenate, shape
-from keras.layers import Lambda, Concatenate
-# import keras.backend as K
-import tensorflow.python.keras as keras
-from tensorflow.python.keras import backend as K
+from tensorflow.keras.layers import Lambda, Concatenate
+from tensorflow.keras import layers
+from tensorflow.keras import models
+from tensorflow.keras import backend
+from tensorflow.keras import utils
+import tensorflow.keras.backend as K
+import keras
 
 
-@keras_modules_injection
+# @keras_modules_injection
 def custom(*args, **kwargs):
     return vggmax(*args, **kwargs)
 
@@ -118,7 +116,7 @@ def vggmax(include_top=True,
         ValueError: in case of invalid argument for `weights`,
             or invalid input shape.
     """
-    backend, layers, models, keras_utils = get_submodules_from_kwargs(kwargs)
+    # backend, layers, models, keras_utils = get_submodules_from_kwargs(kwargs)
 
     if not (weights in {'imagenet', None} or os.path.exists(weights)):
         raise ValueError('The `weights` argument should be either '
@@ -357,7 +355,7 @@ def vggmax(include_top=True,
     # Ensure that the model takes into account
     # any potential predecessors of `input_tensor`.
     if input_tensor is not None:
-        inputs = keras_utils.get_source_inputs(input_tensor)
+        inputs = utils.get_source_inputs(input_tensor)
     else:
         inputs = all_input
     # Create model.
@@ -366,20 +364,20 @@ def vggmax(include_top=True,
     # Load weights.
     if weights == 'imagenet':
         if include_top:
-            weights_path = keras_utils.get_file(
+            weights_path = utils.get_file(
                 'vgg16_weights_tf_dim_ordering_tf_kernels.h5',
                 WEIGHTS_PATH,
                 cache_subdir='models',
                 file_hash='64373286793e3c8b2b4e3219cbf3544b')
         else:
-            weights_path = keras_utils.get_file(
+            weights_path = utils.get_file(
                 'vgg16_weights_tf_dim_ordering_tf_kernels_notop.h5',
                 WEIGHTS_PATH_NO_TOP,
                 cache_subdir='models',
                 file_hash='6d6bbae143d832006294945121d1f1fc')
         model.load_weights(weights_path)
         if backend.backend() == 'theano':
-            keras_utils.convert_all_kernels_in_model(model)
+            utils.convert_all_kernels_in_model(model)
     elif weights is not None:
         model.load_weights(weights)
 

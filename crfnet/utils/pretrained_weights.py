@@ -4,7 +4,7 @@ They are safed into /.keras in the home folder and their path is passed as outpu
 As we load these models by name, we always include top, whatever this is.
 """
 
-import keras.utils 
+import tensorflow.keras as keras
 
 def get_weights_path(network):    
     

@@ -16,6 +16,7 @@ limitations under the License.
 
 import tensorflow
 
+tensorflow.compat.v1.disable_eager_execution()
 
 def ones(*args, **kwargs):
     """ See https://www.tensorflow.org/versions/master/api_docs/python/tf/ones .
@@ -65,7 +66,7 @@ def resize_images(images, size, method='bilinear', align_corners=False):
         'bicubic' : tensorflow.image.ResizeMethod.BICUBIC,
         'area'    : tensorflow.image.ResizeMethod.AREA,
     }
-    return tensorflow.image.resize_images(images, size, methods[method], align_corners)
+    return tensorflow.compat.v1.image.resize_images(images, size, methods[method], align_corners)
 
 
 def non_max_suppression(*args, **kwargs):
