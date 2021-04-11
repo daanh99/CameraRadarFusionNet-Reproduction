@@ -47,3 +47,5 @@ crfnet/configs/neural_filter/*
 *.code-workspace
 
 crfnet/libcudnn.so.7
+
+crfnet/data/mini/
