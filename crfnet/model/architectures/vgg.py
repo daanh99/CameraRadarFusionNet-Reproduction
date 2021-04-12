@@ -15,8 +15,12 @@ limitations under the License.
 """
 
 #todo: @Max purpose of vgg and vgg_max scripts? Unify scripts?
-import keras
-from keras.utils import get_file
+import tensorflow.compat.v1 as tf
+
+from ...utils.pretrained_weights import get_weights_path
+
+tf.disable_v2_behavior()
+from tensorflow.keras.utils import get_file
 
 from . import retinanet
 from . import Backbone
@@ -38,13 +42,13 @@ class VGGBackbone(Backbone):
         Weights can be downloaded at https://github.com/fizyr/keras-models/releases .
         """
         if self.backbone == 'vgg16':
-            resource = keras.applications.vgg16.vgg16.WEIGHTS_PATH_NO_TOP
+            resource = get_weights_path('vgg')
             checksum = '6d6bbae143d832006294945121d1f1fc'
         elif 'vgg-max' in self.backbone:
-            resource = keras.applications.vgg16.vgg16.WEIGHTS_PATH_NO_TOP
+            resource = get_weights_path('vgg')
             checksum = '6d6bbae143d832006294945121d1f1fc'
         elif self.backbone == 'vgg19':
-            resource = keras.applications.vgg19.vgg19.WEIGHTS_PATH_NO_TOP
+            resource = get_weights_path('vgg')
             checksum = '253f8cb515780f3b799900260a226db6'
         else:
             raise ValueError("Backbone '{}' not recognized.".format(self.backbone))
@@ -84,15 +88,15 @@ def vgg_retinanet(num_classes, backbone='vgg16', inputs=None, modifier=None, dis
     """
     # choose default input
     if inputs is None:
-        inputs = keras.layers.Input(shape=(None, None, 3))
+        inputs = tf.keras.layers.Input(shape=(None, None, 3))
     elif isinstance(inputs, tuple):
-        inputs = keras.layers.Input(inputs)
+        inputs = tf.keras.layers.Input(inputs)
         
     # create the vgg backbone
     if backbone == 'vgg16':
-        vgg = keras.applications.VGG16(input_tensor=inputs, include_top=False, weights=None)
+        vgg = tf.compat.v1.keras.applications.VGG16(input_tensor=inputs, include_top=False, weights=None)
     elif backbone == 'vgg19':
-        vgg = keras.applications.VGG19(input_tensor=inputs, include_top=False, weights=None)
+        vgg = tf.keras.applications.vgg19.VGG19(input_tensor=inputs, include_top=False, weights=None)
     elif 'vgg-max' in backbone:
         vgg = vggmax.custom(input_tensor=inputs, include_top=False, weights=None, cfg=cfg)
     else:
@@ -120,10 +124,10 @@ def vgg_retinanet(num_classes, backbone='vgg16', inputs=None, modifier=None, dis
         if 'fpn' in backbone:
             radar_outputs = [vgg.get_layer(name).output for name in radar_names]
             if cfg.pooling == 'min':
-                radar_outputs.append(keras.layers.Lambda(min_pool2d, name='rad_block6_pool')(radar_outputs[-1]))
-                radar_outputs.append(keras.layers.Lambda(min_pool2d, name='rad_block7_pool')(radar_outputs[-1]))
+                radar_outputs.append(tf.keras.layers.Lambda(min_pool2d, name='rad_block6_pool')(radar_outputs[-1]))
+                radar_outputs.append(tf.keras.layers.Lambda(min_pool2d, name='rad_block7_pool')(radar_outputs[-1]))
             elif cfg.pooling == 'conv':
-                radar_outputs.append(keras.layers.Conv2D(int(64 * cfg.network_width), (3, 3),
+                radar_outputs.append(tf.keras.layers.Conv2D(int(64 * cfg.network_width), (3, 3),
                                 activation='relu',
                                 padding='same',
                                 strides=(2, 2),
@@ -134,8 +138,8 @@ def vgg_retinanet(num_classes, backbone='vgg16', inputs=None, modifier=None, dis
                                 strides=(2, 2),
                                 name='rad_block7_pool')(radar_outputs[-1]))
             else:
-                radar_outputs.append(keras.layers.MaxPooling2D((2, 2), strides=(2, 2), name='rad_block6_pool',padding="same")(radar_outputs[-1]))
-                radar_outputs.append(keras.layers.MaxPooling2D((2, 2), strides=(2, 2), name='rad_block7_pool',padding="same")(radar_outputs[-1]))
+                radar_outputs.append(tf.keras.layers.MaxPooling2D((2, 2), strides=(2, 2), name='rad_block6_pool',padding="same")(radar_outputs[-1]))
+                radar_outputs.append(tf.keras.layers.MaxPooling2D((2, 2), strides=(2, 2), name='rad_block7_pool',padding="same")(radar_outputs[-1]))
         else:
             radar_outputs = None
     except Exception as e:

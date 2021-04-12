@@ -1,11 +1,9 @@
 setuptools
 numpy>=1.16.0
-tensorflow-gpu==1.13.* 
-tensorflow-serving-api-gpu==1.13.* 
-opencv-python==3.* 
+opencv-python==3.*
 keras==2.2.4
 pyquaternion 
-h5py==2.7.1
+h5py==2.10.0
 Pillow 
 progressbar2 
 bayesian-optimization 
